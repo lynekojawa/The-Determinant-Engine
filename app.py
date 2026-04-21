@@ -1,3 +1,45 @@
+import streamlit as st
+import numpy as np
+import pandas as pd
+from determinant_engine import Matrix
+
+def matrix_to_latex(matrix):
+    latex = r"\begin{bmatrix}"
+    for row in matrix:
+        latex += "&".join(map(str,row))+r"\\"
+    latex += r"\end{bmatrix}"
+    return latex
+st.set_page_config(page_title="Determinant Calculator", layout = "centered")
+st.title("Determinant Calculator")
+st.write("It will calculate your determinant :D")
+st.sidebar.header("⚙️ Setting")
+mode= st.sidebar.radio("Calculation Mode", ["Standard (Float)", "Finite Field (F_q)"])
+mod_val = None
+if mode == "Finite Field (F_q)":
+    mod_val =st.sidebar.number_input("Enter Prime (q)", value = 2)
+
+dim_n = st.number_input("Enter dimensions (n x n)", min_value=1, max_value=10, value = 3)
+
+initial_df = pd.DataFrame(np.zeros((dim_n, dim_n), dtype = int))
+st.write("input your values")
+edited_df = st.data_editor(initial_df, num_rows="fixed")
+
+if st.button("Calculate"):
+    matrix_data = edited_df.values.tolist()
+
+    try:
+        matrix = Matrix(matrix_data)
+        st.write("input varriables")
+        st.latex(f"A = {matrix_to_latex(matrix_data)}")
+
+        det = matrix.calculate_determinant(mod=mod_val)
+
+        st.success(f"RESULT: {int(round(det)) if mode == 'standard (Float)' else det}")
+
+    except Exception as e:
+        st.error("ERROR!")
+
+
 class Matrix:
     def __init__(self, matrix_data):
         row_length = [len(row) for row in matrix_data]
@@ -118,44 +160,3 @@ class Matrix:
                     scalar = (-element_to_zero/pivot_element)
 
                 self.add_scaled_row(k,j,scalar,mod)
-
-
-
-
-
-
-# --- Test Strike Zone ---
-if __name__ == "__main__":
-    print("=== Test v2.0 ===")
-    try:
-        n = int(input("Enter dimension of Square Matrix(n x n): "))
-
-
-        print(f"Enter each row's elements separated by spaces (e.g, '1 2 3'):")
-
-        user_matrix_data = []
-        for i in range(n):
-            row_input = input(f"Row {i + 1}: ")
-            row_data = list(map(float, row_input.split()))
-            user_matrix_data.append(row_data)
-
-        user_matrix = Matrix(user_matrix_data)
-
-
-        print("\n--- Ingested Matrix ---")
-        print(user_matrix)
-        print(f"Shape: {user_matrix.shape}")
-
-        if user_matrix.is_square:
-            std_det = user_matrix.calculate_determinant()
-            print(f"Standard Determinant: {int(round(std_det))}")
-            int_matrix_data = [[int(x) for x in row] for row in user_matrix.matrix]
-            int_matrix = Matrix(int_matrix_data)
-
-            f2_det = int_matrix.calculate_determinant(mod = 2)
-            print(f"Determinant in F2 (Modular Arithmetic): {f2_det}")
-        else:
-            print("Notice: This is not a Square Matrix. Determinant is undefined.")
-
-    except ValueError as e:
-        print(f"Critical Input Error: {e}")
