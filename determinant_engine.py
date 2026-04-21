@@ -1,17 +1,22 @@
-# 4/20 We are jumping into phase 3 which is guassian elimination for the efficiency of the calculator.
+# 4/21 We are jumping into UI today, this time I wanted to make this application into working in both desktop and mobile.
+#add space after ', ' to make it easy to read.
 
+#Define Class = collection of functions
 class Matrix:
+#this will create all the rows into the list, eg [[1,2], [3,4]]-> [2,2] i.e. based on input this will be 2x2 matrix
+#also warns when it is not a square matrix.
     def __init__(self, matrix_data):
         row_length = [len(row) for row in matrix_data]
         if len(set(row_length)) > 1:
             raise ValueError("All rows must have the same number of columns")
-
+#setting initial counts
         self.matrix = matrix_data
         self.swap_count = 0
+#formatting, so this will look like matrix shape as you can see it from the class.
     def __repr__(self):
         if not self.matrix:
             return "[ ]"
-        return "\n".join([f"[{','.join(map(str, row))}]" for row in self.matrix])
+        return "\n".join([f"[{', '.join(map(str, row))}]" for row in self.matrix])
 
     def get_row(self, index):
         return self.matrix[index]
@@ -19,34 +24,34 @@ class Matrix:
     def get_col(self, index):
         return [row[index] for row in self.matrix]
 
+#if rows>0 else 0 is the defense, to avoid index error.
+#@property -> data variable call
+#user_matrix.get_shape() ->  function call
     @property
     def shape(self):
         rows = len(self.matrix)
         cols = len(self.matrix[0]) if rows > 0 else 0
         return rows, cols
-
+#flow control, helping to detect square matrix
     @property
     def is_square(self):
         n, m = self.shape
         return n == m
 
-#phase 2 function
+#submatrix extraction
     def get_minor(self, row_idx, col_idx):
         n, m = self.shape
         sub_data = [
             [self.matrix[r][c] for c in range(m) if c != col_idx]
             for r in range(n) if r != row_idx
         ]
-
         return Matrix(sub_data)
-#adding Gaussian eliminations in this function to efficiency.
-#in O(n!) and O(n^3) when n=3 3!=6 and 3^3=27 HOWEVER when n =4 4!=24 and 4^3=64
-#This is why we are dividing at n=3
 
+#Calculator actually does determinant calculating
     def calculate_determinant(self, mod=None):
         if not self.is_square:
             raise ValueError("Determinant can only be calculated for a Square matrix!")
-
+#copy the original so that it protects the original data value
         original_matrix = [row[:] for row in self.matrix]
         n, m = self.shape
 
@@ -58,11 +63,13 @@ class Matrix:
             for j in range(n):
                 sign = 1 if j %2 ==0 else -1
                 minor = self.get_minor(0,j)
-
+#This is how recursive works
                 sub_det = minor.calculate_determinant(mod)
                 result += sign * self.matrix[0][j] * sub_det
             return result % mod if mod else result
         else:
+#defined to_upper_triangular(mod) is under class, and defined below
+#self is defined very beginning, so that this has saving space.
             self.to_upper_triangular(mod)
             det = 1
             for i in range(n):
@@ -72,7 +79,7 @@ class Matrix:
             det = det % mod if mod else det
             self.matrix = original_matrix
             return det
-#phase 3
+
     def swap_rows(self, i,j):
         self.matrix[i], self.matrix[j] = self.matrix[j], self.matrix[i]
         self.swap_count += 1
@@ -116,6 +123,8 @@ class Matrix:
             for k in range(j+1, n):
                 element_to_zero = self.matrix[k][j]
 #this happens because computer thinks .0000000000001 is not 0?
+#this creates a bit of computer way of numbers, so the result comes out with decimals.
+#eg comptuter saves 3 into 2.9999998 or 3.0000004 just way it wokrs, huh
                 if mod is not None:
                     scalar = (-element_to_zero * inv_pivot) % mod
                 else:
@@ -154,7 +163,7 @@ if __name__ == "__main__":
 
         if user_matrix.is_square:
             std_det = user_matrix.calculate_determinant()
-            print(f"Standard Determinant: {std_det}")
+            print(f"Standard Determinant: {int(round(std_det))}")
             int_matrix_data = [[int(x) for x in row] for row in user_matrix.matrix]
             int_matrix = Matrix(int_matrix_data)
 
