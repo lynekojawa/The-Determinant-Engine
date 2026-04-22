@@ -135,10 +135,6 @@ class Matrix:
                 self.add_scaled_row(k,j,scalar,mod)
 
 
-
-
-
-
 # --- Test Strike Zone ---
 if __name__ == "__main__":
     print("=== Test v2.0 ===")
