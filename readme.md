@@ -18,11 +18,11 @@ It calculates determinants for you. Good to check your answers after practice. a
 Python, Streamlit
 
 ## 🧠 What I Learned
-In this project I learned that self built engine could be useful, and importing an engine file is strong tool. 
-Phase 1 is always the hardest, it feels like staring at a blank canvas. 
-Extending O(n!) to O(n^3) is also efficient to as n gets larger. 
-Computer handle numbers weird, so I faced the number looks like 287648.0000000008 something like this which was annoying. 
-It was first time I used classes and many new variables and functions
+In this project I learned that self built engine could be useful, and importing an engine file is strong tool. <br>
+Phase 1 is always the hardest, it feels like staring at a blank canvas. <br>
+Extending O(n!) to O(n^3) is also efficient to as n gets larger. <br>
+Computer handle numbers weird, so I faced the number looks like 287648.0000000008 something like this which was annoying. <br>
+It was first time I used classes and many new variables and functions <br> 
 
 ## 🚀 Current Status & Next Steps
 *   **Status:** Currently completed, I reached my goal.
